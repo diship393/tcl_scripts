@@ -1,3 +1,3 @@
 # tcl_scripts
-contains varous tcl scripts
+contains various tcl scripts
 for  VMD
