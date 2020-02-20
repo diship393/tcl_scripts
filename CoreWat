@@ -1,0 +1,24 @@
+package require psfgen
+
+# Load a pdb and psf file into both psfgen and VMD.
+resetpsf
+readpsf ionized.psf
+coordpdb ionized.pdb
+mol load psf ionized.psf pdb ionized.pdb
+
+# Select waters that are inside the SSM core.
+set badwater1 [atomselect top "name OH2 and within 3 of resname  PHM PHE HIV ION "]
+#set badwater1 [atomselect top "name OH2 and within 6 of segname LT01 LT02 LT03 LT04 LT05"]
+
+# Alternatively, select waters that are outside our periodic cell.
+#set badwater2 [atomselect top "name OH2 and (x<-30 or x>30 or y<-30 or>30
+#or z<-30 or z>30)"]
+
+# Delete the residues corresponding to the atoms we selected.
+foreach segid [$badwater1 get segid] resid [$badwater1 get resid] {
+delatom $segid $resid
+}
+# Have psfgen write out the new psf and pdb file (VMD’s structure and
+# coordinates are unmodified!).
+writepsf NW.psf
+writepdb NW.pdb
