@@ -12,10 +12,10 @@ mol color ColorID 23
 mol material AOShiny
 mol addrep top
 
-mol representation VDW
-mol selection {(resname DEB)}
-mol color ColorID 2
-mol material AOShiny
-mol addrep top
+#mol representation VDW
+#mol selection {(resname DEB)}
+#mol color ColorID 2
+#mol material AOShiny
+#mol addrep top
 
 display projection   Orthographic
