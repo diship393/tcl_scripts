@@ -1,0 +1,21 @@
+menu main on
+mol default style {Lines}
+color Display Background black
+mol default selection {not water}
+#mol load psf NW.psf dcd t2.dcd
+mol load psf NW.psf dcd 8.NW.npt.eq.dcd
+#mol addfile t8.dcd type dcd waitfor all
+
+mol representation VDW
+mol selection {(resname PHM PHE HIV)}
+mol color ColorID 23
+mol material AOShiny
+mol addrep top
+
+mol representation VDW
+mol selection {(resname DEB)}
+mol color ColorID 2
+mol material AOShiny
+mol addrep top
+
+display projection   Orthographic
