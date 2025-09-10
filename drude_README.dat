@@ -1,0 +1,10 @@
+ regular expression - to use when searching for residues:
+
+# in general
+$ grep -iE "^ *(resi|pres) +[^ ]+" *
+
+# for drude specifically
+$ grep -iE "^ *(resi|pres) +[^ ]+" *drude*
+
+
+vmd atomselection >  not (name "D.*" "LP.*")
