@@ -1,0 +1,1186 @@
+#############
+# Source: Tcl/TK for Real Programers - Clif Flynt
+#############
+
+/usr/bin/tclsh
+
+TCL interpreters:
+tclsh : text based 
+wish : windowing shell : tclsh + TK graphic extensions
+
+Tcl replaces "backslash new line" combination with a space. 
+
+TCL syntax conventions:
+commandname 
+subcommandname
+-option 
+argument
+?-option? options that are not required
+?argument? arguments that are not required
+
+TCL syntax: 
+command/subroutine subcommand/option/arguments .... ;/new line
+
+spaces in TCL scritp > used to parse the line
+
+goup strings : ""/{}
+
+TCL does not require declaration of variable befor using them. assign a variable > space is allocated for data and adds the variable name to the internal tables
+
+Convention
+local variable name: Start with an upperclass letter
+Global variale name: start with lower class letter
+
+[..Commands..] >> command is evaluated immediately and its return value is available for the script to process.
+
+set command always returns the value of the variable being set.
+
+
+### Data types
+Primitive datatypes in TCL: string, composite data types: list and associative array
+graphic objects, I/O channels, sockets : accessed via handles
+
+All TCL data are strings. 
+String can hold alphanumeric or numeric (integers, floating points, s cientific notation).
+
+## associative array : array that uses a string to index the array elements 
+set price(apple) .10
+set discount(12) 0.95
+
+## Handles : special purpose objects
+returned by the TCL command that creates the object and can be used to access and manipulate the object
+
+opening a file > handle is returned for accessing that file
+
+types of handles include:
+channel : handles that references an I/O device such as file, serial port, or TCP socket. A channel is returned by an open or socket call and can be an argument to a puts, read, close, flush, or gets call.
+
+graphic: handle that refers to a graphic object. used to modify or query an object
+
+http: handle that references data returned by an http::geturl operation. An http handle can be used to access the data that was returned from the http::geturl command or otherwise manipulate the data.
+
+
+##### TCL commands
+set varName ?value?
+> if set is invoked with a sigle argument, then that argument must be a variable name and the value of that variable is returned.
+
+## Math Operations
+incr: incrementing the value of an integer
+expr: provides an interface to a general-purpose calculation engine
+
+
+incr varName ?incrValue? ;# incrValue = maybe positive or negative integer
+
+expr >> does not expect a fixed number of arguments 
+syntax: expr mathExpression
+
+math operations (grouped in decreasing order of precedence):
+
+- + ~ !  : Unitary minu, plus, bitwise NOT, logical NOT
+* / % : Multiply, divide, remainder
++ - : add, subtract
+<< >>: left shift, right shift
+< > <= >=: less than, greater  than, less than or equal, greater than or equal
+== !=: equality, inequality
+&: Bitwise AND
+^: bitwise exclusive OR
+|: bitwise OR
+&&: logical AND
+||:  logical OR
+x?y:z : if then else. if x evaluates to nonzero, then result is y else its z.
+
+bitwise operations are valid only if the arguments are integers (not floating point and scientific notation)
+
+## math functions -- supported by expr
+cos(radians)
+acos((float)
+cosh(radian)
+sin
+asin
+sinh
+tan
+atan
+tanh
+hypot(float) ;# eucledian distance
+atan2(float, float) ;# arctangent of ratio
+
+log (float)
+log10 (float)
+sqrt(float)
+exp(float)
+pow(float, float)
+
+floor(float)
+ceil(float)
+fmod(float, float) ; # reminder
+round(num)
+double(num) ;# convert int to float
+int(num)
+abs(num)
+
+srand(num) ; # SEED random number
+rand() ;# generate random number 
+
+#### if command
+if {testExpression1} {
+	body1
+} ? elseif {testExpression2} {
+	body2
+	} ....?
+?else {bodyN} ?
+
+# [eof $inputFile] 
+
+## switch statement
+switch ?opt? str pat1 bod1 ?pat2 bod2? ?....?  ?default?
+
+?opt? : possible options
+-exact:: match a string exactly to the test string, include "-"
+-glob:: match a pattern string to the test string using the glob string match rules
+-regexp:: match a pattern string to the test string using the regx string match rules
+-- :: absolutely the last option. the next string will be the string argument. this allows strings that start with a dash (-) to be used as arguments without being interpreted as options
+
+str : string to match against patterns
+patN : pattern to compare with the string
+bodN : code body to evaluate if patN matches string 
+default : default option
+
+## rules for glob matching
+* : matches 0 or more characters
+? : matches a sigle character
+[] : matches a character in the set defined within the braces
+	[abc] defines abc as the set
+	[x-y] defines all characters alphabetically b/w x and y (inclusive) as the set
+\? : matches the single character?.
+
+## switch with curly braces
+switch ?option? string {
+	pattern1 body1
+	?pattern2 body2?
+	?default?
+}
+when braces are used, pattern strings must be hardcoded patterns. 
+
+when switch command is used without braces, the pattern strings may be variables, allowing a script to modify the behaviour of a switch command at run time. 
+
+## for loop
+for {set i 0} {$i < 2} {incr i} {
+	....
+}
+
+## while loop
+while {...} {
+	....
+}
+
+## foreach 
+foreach listVar list body
+
+foreach element [list one two three] {
+	puts "$element"
+} 
+
+#### string processing commands
+string / format : manipulating strings
+
+string subcommands include commands for searching for substrings, identifying string matches, trimming unwanted characters, and converting case
+
+format command generates formatted o/p from a format descriptor and a set of data.
+
+# in string last position is referred to as "end"
+
+# string match pattern string 
+# string tolower / toupper string ; # not done in place, a new string of lowercase letters is returned 
+# string first substr string ; # returns the location of the first instance of a pattern in a test string or -1 if the pattern does not exist in the test string 
+# string length string ; # return the number of characters in a string - includes spaces in the count
+# string range string first last ; # returns the characters b/w two points of string eg: string range $str 0 end
+ 
+
+#### format command
+> emulates C sprintf function
+> takes as arguments a format description and a set of values that will be used to replace % fields in the format description
+> percnetage symbol: % % field
+
+> % ?justification? ?field width? format definition
+first character in a replacement field is a % symbol
+field justification: + : right justified; - : left justified
+field width: 
+** if integer - width of field in chars
+** if int.int - first rep total width of the filed in chars; second rep the number of digits to the right of the decimal points to display the floating point formats
+format definition: 
+** c - format %c 65 -- returns A; argument decimal integer. replace the field withe the ASCII char value of this integer
+** d/i - format %d 0xff -- returns 255 ; argument decimal integer. replace the filed with the decimal rep of this integer
+** E/e - format %e 0xff -- returns 2.550000e+02 ; replace the field with scientific notation rep of this integer
+** f - format %f 1.234 -- returns 1.234 ; decimal fraction rep
+** G/g - format %g 1.234e2 -- returns 123.4 ; replace with scientific notation or floating point rep
+** o - format %o 0xf -- returns 17 ; octal rep
+** s - format %s 0xf -- returns 0xf ; argument should be string. replace the field with the argument
+** u - format %u -1 -- returns 4294967295 ; argument integer. replaces the field with with the decimal rep of this integer treated as an unsigned value
+** X/x - format %s -1 -- returns ffffffff ; integer argument. replace the field with the hexadecimal rep
+
+#### list 
+> list : ordered set of strings
+> elements of a list are separated by spaces 
+> if a list element contains a space, then the element is grouped with braces {}
+> list creation:
+** set command
+set listname "this is a list"
+
+** list command
+list element1 ?element2? .... ?elementN?
+
+** lappend
+lappend listName ?element1? ... ?elementN?
+-- will modify existing list
+
+** split 
+split data ?splitchar?
+splitchar - list of char to split the data at
+-- splits the data (string) wherever certain char apppear. by default the split location is a whtespace char: space/tab/newline
+
+** llength list - returns the length of a list - number of list elements 
+- if list of lists : counted as a single list element
+
+** lindex list index
+- returns a list element referenced by its position in the list
+- if index > length of the list, empty string is returned
+
+
+#### Associative Array Commands
+> uses a string for an array index instead of an integer
+
+set count(apple) 5
+set count(pear) 3
+puts "{expr $count(apple) + $count(pear)}"
+
+** array name arrayName ?pattern?
+
+** array get arrayName
+returns a list of array indices and associated values 
+
+++++++++++++++++++++++++
+I/O in TCL
+++++++++++++++++++++++++
+- All I/O in TCL is done through channels. 
+- channel is an I/O device abstraction
+- The TCL channel device abstraction is extended beyond the stream abstraction to include sockets and pipes in the abstraction layer.
+- Channels are accessed by handles, which are returned by the TCL commands that open channels.
+- A channel handle can be passed to an I/O command to specify which channel should accept ot provide data.
+
+** stdin
+
+** stdout
+
+** stderr
+
+** puts ?-nonewline? ?channel? outputString
+by default puts command will append a newline char to the string
+
+>>> Input
+- gets and read command
+
+** gets channelID ?varName?
+?varName? data will be stored in this variable, and the number of chars read will be returned. If absent, the line of data will be returned.
+eg: gets stdin inputString
+> gets command will read a single line of i/p from a channel and strip off any newline character
+> gets command may return the data that was read or the number of chars that were  read
+
+** read channelID numBytes 
+read ?-nonewline? channelID
+read data from a channel until an EOF condition
+?-nonewline? discard the last character if its a new line
+eg: read stdin 5
+> read a certain number of chars, or until the end of data, and always returns the data read
+> better for files, socket connection 
+
+#### opening channels
+- A channel can be created by an open command or by a socket command. 
+- open: open a channel to a file , a device, or a pipe to another program
+- socket: open a client socket or to open a server socket that will listen for clients
+
+** open fileName ?access? ?permissions?
+fileName: if first char of the name is a pipe (|), then the filename argument is a request to open a pipe connection to a command. first word will the command name, and subsequent words will be arguments to the command
+?access?: 
+r	read only file
+r+	read and write access. file must already exist
+w	write only. truncate file if it exists
+w+	read and write access. truncate the file if it exists, or create it if it doesn't
+a	write only. file must already exist, and new data will be appended to the file
+a+	read and write access. append the dat to an exiting file
+?permissions?: argument will be an integer, with the same bit definitions as the argument to creat sys callon OS being used.
+
+eg: puts "\nOpening a Pipe\n"
+set pipe [open "|ls /" "r"]
+# read the o/p of the ls command
+
+while {![eof $pipe]} {
+	set length [gets $pipe lsLine]
+	puts "$lsLine"
+}
+
+#### Client Sockets
+** socket ?options? host port
+
+?options?:
+-myaddr addr	defines the address of the client of the client side of the socket. not necessary if the client machine has only one network interface
+
+-myport port	defines the port number for the server side to open. if not supplied, randomly assigned
+
+-async		causes socket command to return immediately, whether the connection has been completed or not.
+
+host: hostname or ip address
+
+port: number of ports to open a connection to on the host machine
+
+#### Bufferred I/O
+** fconfigure channelID ?name? ?value?
+
+?name?: name of the config field
+-blocking boolean	if true (default), TCL script will block on a gets / read, until the dta is available. IF FALSE,  gets/read/puts/flush/close will not block.
+-buffering newValue	if set to full, channel will use buffered I/O. If set to line, the buffer will be flushed whenever a full line is recieved. If none, channel will flush whenever chars are recieved. 
+** flush channelID -- forces buffered data to be written immediately
+  
++++++++++++++++++++++++++++++
+Chapter 4: TCL Code Examples
++++++++++++++++++++++++++++++
+
+TCL processes commmands in two steps:
+1. performs command and variable substitutions
+2. evaluates the resulting string
+
+*** Substitution - TCL scans the command left to right and perform substitutions
+1. [..XXX.] : XXX replaced by the results of the command - command substitution 
+2. $XXX : variable substitution
+
+
+> to pass an argument that consists of multiple words: group the words into a single argument using {..} or "..."  
+> "..." : substitutions inside is permitted
+> "...." : substitutions inside not permitted
+> \X : disables special meaning of the character X
+> TCL commands are called recursively if multiple braces are present inside each other. 
+
+#### extracting data from a large list
+** convert lines into the list and then iterate through list to check each line
+
+> # split data into a list at newline markers
+set urlList [split $urls "\n"]
+
+> # examining a list using for loop
+for start test next body
+for {set a 0} {$a < [llength $urlList]} {incr pos} {
+	........
+}
+-- TCL treats an end of line condition as end of command unless end of line is escaped with a \ or with a grouped string {.......}
+
+> # foreach varname list body
+foreach item $urlList {
+	if {[string first "Scriptics" $item] >= 0} {
+		puts "SCRIPTICS PAGE: \n	$item"	
+	}
+}
+
+> # using string match
+if {[string match {*[Ss]criptics*} $item]} {....} ; # matches to Scriptics/ scriptics with any set of chars before or after
+
+> # lsearch - search a list for an element that matches that pattern
+lsearch ?mode? list pattern 
+lsearch: returns the index of the first list element that matches pattern or -1 if none
+?mode?:
+-exact
+-glob
+-regexp  
+
+> # regexp command
+
+** regexp ?opt? expr string ?fullmatch? ?submatch?
+regexp: returns 1 if expr has a match in string
+opt: 
+-nocase 
+-indices : stores the location of a match, instead of matched chars, in the submatch variable
+-- : marks the end of options. args that follow this will be treated as a regex even if they start with a dash
+expr: regex to search for
+string: string to search for regex
+?fullmatch?: if there is a match, entire match will be placed in this variable
+?submatch?: if there is a match, Nth partenthesized regex match will be placed in this variable. The parenthesized regex are counted from left to right and outer to inner.
+
+** regsub ?options? expression string subSpec varName
+regsub: copies string to variable varName. if expression matches a portion of string, then that portion is replaced by subSpec
+?options?:
+-all: replace all occurences of the regex with replacement string. by default, only the first occurence is replaced
+-nocase:
+--:
+ 
+###### procs
+proc: TCL command, not a declaration
+> proc command takes three arguments that define a procedure: proc name, argument list, body of code 
+
+> # 
+proc demoProc {arg1 arg2} {
+	puts "$arg1 $arg2"
+}
+
+# call the proc
+demoProc 1 2
+demoProc alpha beta
+
+** variable scope : global, namespace
+
+** TCL has several global variables that describe the version of the interpreter, current state of interpreter, env in which the interpreter is running etc.  includes:
+argv: a list of command line arguments
+argc: number of list elements in argv
+env: an associative arrya of env variables
+tcl_version: 
+tk_version: version of tk interpreter
+tcl_pkgPath: a list of directories to search for packages to load
+errorInfo: after an error occurs, this variable contains info about where the error occured within the script being evaluated
+errorCode: 
+
+tcl_platform: an associated array, describing the hardware and OS that the script is running under. options include:
+byteOrder - LittleEndian / BigEndian
+osVersion
+machine - CPU architecture 
+platform - type of OS - windows etc
+os - name of OS 
+
+if {argc != 1} {
+	puts "geturl.tcl string"
+	exit -1;
+}
+
+switch $tcl_platform(platform) {
+	unix {
+		set var "UNIX"
+	}
+	windows {
+		set var "WINDOWS"
+	}
+	mac {
+		set var "MAC"
+	}
+	default {
+		set var "UNKNOWN"
+	}
+}
+
+
+** time cmd ?iterations?
+time: number of microseconds per iterations of the command
+cmd: put within curly braces if don't want substitutions done twice
+
++++++++++++++++++++++++++++++
+Chapter 5: Using Lists and Arrays
++++++++++++++++++++++++++++++
+> If TCL, the indices are stored in a very efficient hash table 
+
+** manipulating ordered data with lists
+split
+lappend
+lsearch
+lreplace
+join ?joinString?  : puts "[join $record :]"  > KEY1:ABC:XYZ:123
+
+lreplace list first last ?element element ....?
+element: a list of elements to replace the orignal elements. if this list is shorter than the number of fields defined by first and last, elements will be delted from the orignal list
+
+** manipulating unordered data with lists
+> key/value pairs : first element - field identifier, second element - field value
+> no position related information
+
+set position 0;
+
+proc getDatum {} {
+	global position;
+	
+	set rawDataList [list \
+		[list KEY1 {First Name} Clif] \
+		[list KEY1 {Last Name} Doe] \
+		[list KEY2 {First Name} John] \
+		[list KEY2 {First Name} Corner] ]
+
+	if {$position < [llength $rawDataList]} {
+		set data [lindex $rawDatalist $position]
+		incr position
+	} else {
+		set data ""
+	}
+	return $data;
+}
+
+** Associative Array > similar to C array
+
+set values(0) 1;
+set desc(0) "First" 
+set value("First") 1 ; non numeric index 
+
+> data that consists of multiple items that need to be grouped together 
+> when define the str, name the members and define what amount of storage space they will require
+
+>>> C structure
+struct {
+	int value;
+	char desc[80];
+} var;
+
+var.value = 1;
+strcpy(var.desc, "First");
+
+>>> TCL Array
+set var(value) 1
+set var(desc) "First"
+
+# TCL variable var groups the description and value together just a structure would do.
+
+#### array of structs 
+>>> Array of C structures
+struct {
+	int value;
+	char desc[80];
+} var[5];
+
+var[0].value = 1;
+strcpy(var[0].desc, "First");
+var[1].value = 2;
+strcpy(var[1].desc, "Second")
+
+>> TCL Array
+set var(0.value) 1
+set var(0.desc) "First"
+set var(1.value) 2
+set var(1.desc) "Second"
+
+*** Exception Handling in TCL
+errorInfo - global variable
+
+## catch script ?varName? 
+catch: catch an error condition and return the results rather than aborting the script
+script: tcl script to evaluate
+varName: variable to recieve the results of the script
+
+if no errors >  catch returns 0
+if errors > catch returns 1 and errorCode and errorInfo variables are set to describe the error
+
+## generate an exception 
+error informationalString ?errorInfo? ?errorCode?
+error: generate an error condition. if not caught, display the informationalString and stack trace and abort the script evaluation
+informationalString: information about the error condition
+erroInfo: string to initialize erroInfo string. more info about the error may be appended to the string
+errorCode: identifying error number to be placed in the global variable errorCode 
+
+proc errorProc {first second} {
+	set dummy [expr 1/$first]
+	set fail [catch {expr 5 * $second} result]
+	if {$fail} {
+		error "Bad second argument"
+	}
+	error "errorproc always fails" "evaluating error" 123
+}
+
+## interacting with a file system - glob and file 
+> glob -  returns a list of directory entries that match a path expression
+
+** glob ?-nocomplain? ?--? pattern ?pattern?
+-nocomplain : if a directory is empty, return an empty string instead of generating an error
+--: identifies the end of options , all following args are patterns even if they start with a dash
+glob C:/windows/*.com
+
+** file subCommand pathName ?arg...?
+subCommand: defines the interaction. include:
+type -- return the type of a file. include:
+	file - pathName is a normal file
+	directory - pathName is a directory
+	link - pathName is a link to another file 
+	charactrSpecial - pathName is a character-oreinted device
+nativename -- returns pathName in the proper format for the current platform
+delete -- delete the file ref by pathName
+exists -- returns 1 if pathName exists, else 0
+isDirectory -- returns 1 if pathName is a directory, 0 if not
+isfile -- returns 1 if pathName is a regular file, else 0
+pathName: path to the directory entry with which to interact
+?arg..? : args that subCommand require
+
+** current state of the TCL interpreter - can report whether a proc or variable has been defined, what a proc body or argument list is, the current level of proc stack etc
+
+$$ info exists varName
+info exists : returns 1 if a variable exists in the local / global scope, else returns 0
+> it can be used to initialize a variable on the first pass through a section of code.
+
+** loading code from a script file
+source fileName
+
+** upvar command > allows a TCL script to declare that a particular variable will be evaluated in a different variable scope than the script that's being evaluated > same as passing a variable by ref in C / C++
+
+upvar ?level? var1 localVar1 ?var2? ?localVar2? 
+?level?: may be a number or the # symbol followed by a number
+> if this is a number, it rep the numbe rof levels higher in the proc stack at which this variable should be evaluated. If 1, the variable will be evaluated in the scope of the calling process; if it's 2, it will be evaluated in the scopeof the process above that.
+> if # sign, then it rep the procedure call level down from the global scope (#0) 
+> level defaults to 1 
+
+TCL does not pass entire arrays by value (but an individual array index may be passed by value to a proc). to pass an entire array to a proc, use upvar command to link to the array in the calling script's scope
+
+Accessing an array element is much faster than using lsearch to find a list element.
+
++++++++++++++++++++++++++++++
+Chapter 6: Procedure Techniques
++++++++++++++++++++++++++++++
+TCL interpreter allows scripts to rename procs or create new procs while the script is running.
+
+> when proc is invoked, it is declared with a name, a list of arguments, and an evaluation body.
+> when a proc is called, TCL interpreter counts the arguments to confirm that there are as many args in the proc call as there were in the proc definition. 
+> if a proc is called with too few args, error message
+no value give for parameter "arg1" to "myProcedure"
+> if too many args, error message: called "myProc" with too many arguments
+
+**** variable number of argsuments to a proc
+> make the final argument in the argument list "args" > TCL interprter will concat the extra arguments into a list and assin the list to the variable args
+
+proc showArgs {first args} {
+	puts "first: $first"
+	puts "args: $args"
+}
+$showArgs oneorg twoorg threeorg
+$o/p> first: oneorg
+args: twoorg threeorg
+
+**** default values for proc arguments
+> define the argument as a list; first element is the argument name, second element is the default value.
+
+proc showDetails {arg1 {numberArg 0} {stringArg {default string}}} {
+	puts "arg1 : $arg1"
+	puts "numberArg: $numberArg"
+	puts "stringArg: $stringArg"
+} 	 
+$ showDefaults firstarg
+$o/p> arg1: firstarg
+numberArg: 0
+stringArg: default string
+
+> order of arguments when a proc is invoked must be the same as the order when proc was defined. values are assigned in the order in which they appear in the proc definition
+> cannot create a proc that has an argument with a default before an argument without a default. 
+
+**** renaming or deleting commands for proc -- useful when dealing with name collisons in libraries and DLLs
+$$ rename command lets you change the name of a command / proc. if renamed to an empty string, proc is deleted.
+
+rename oldName ?newName?
+
+**** getting info about procs: info command
+
+info commands pattern : returns a list of commands with names that match a pattern.
+info procs pattern: returns a list of procs with names that match a pattern
+info body procName : return the body of a proc
+info args procName: return the arguments of a procedure 
+
+**** perform substitution on a string
+
+subst string
+
+> subst command performs a single pass of variable and command substitutions on a string and returns the modified string.
+> first phase of a command being evaluated, but the actual evaluation of the command does not happen. 
+> If the string includes a [...], the command within the brackets will be evaljuated as part of this substitution.
+> used when need to replace a variable with its contents but do not want to evaluate it as a command 
+
+**** evaluating a string as a TCL command
+> eval command concatenates its arguments into a string and then evaluates the string as if it were text in a script file. 
+> eval command allows a script to create its own command lines and evaluates them
+> agent style programs
+
+eval arg ?args?
+set cmd(0) {set a 1}
+set cmd(1) {puts "start value of A is: $a"}
+for {set i 0} {$i < 2} {incr i} {
+	eval $cmd(i)
+}
+
+$ o/p: start value of A is : 1
+
+**** global and local scopes
+global scope: 
+> primary scope in a TCL script
+> any variable declared global or defined outside a proc - maintained in global scope - exist until either the script ends or they are explicitly destroyed with unset command.
+> global variables can be accessed from any other scope by declaring the variable as global 
+> global command must be evaluated before that variable is used in the local scope. TCL interpreter will generate an error if declare a variable to be global after using it in a local scope.
+
+set globalVar "I'm global"
+proc goodProc{} {
+	global globalVar 
+}
+
+> when a proc is evaluated, it creates a local scope. variables created in this scope are destroyed when the preoc returns.
+> variables used within a proc are visible to other procs called from that proc but not to procs outside the current call stack
+> when a new proc is defined within a proc, the new proc is defined in the global scope and is not deleted when the previous proc returns.
+> each time a proc invokes another proc, another local scope is created. These nested proc calls can be viewed as a stack, with the global scope at the top and each successive proc call stacked below previous 
+> a proc can access variables within the global scope or within the scope of the procs that invoked it via the upvar and uplevel commands. 
+> The upvar command will link a local variable to one in a previous (higher) stack scope
+
+proc top {topArg} {
+	set localArg [expr $topArg+1]
+	puts "Before calling bottom localArg is: $localArg"
+	bottom localArg
+	puts "After calling bottom, localArg is: $localArg "
+}
+
+proc bottom {bottomArg} {
+	upvar $bottomArg arg
+	puts "bottom is passed $bottomArg with a value of $arg"
+	incr arg 
+}
+top 2
+
+$ o/p:
+Before calling bottom localArg is: 3
+bottom is passed localArg with a value of 3
+After calling bottom, localArg is: 4
+
+> uplevel command will concatenate its arguments and evaluate the resulting command line in a previous scope
+
+proc stack1 {} {
+	set x 1
+	puts "X in stack1 starts as $x"
+	stack2
+	puts "X in stack1 ends as $x"
+	puts ""
+}
+
+proc stack2 {} {
+        set x 2
+        puts "X in stack2 starts as $x"
+        stack3 
+        puts "X in stack2 ends as $x"
+        puts ""
+}
+
+proc stack3 {} {
+	set x 3
+	puts "X in stack3 starts as $x"
+	puts ""
+	
+	# display the value of x at stack levels relative to the current level
+	for {set i 1} {$i <= 3} {incr i} {
+		upvar $i x localX
+		puts "X at upvar $i is $localX"
+	}
+
+	puts "\nx is being modified from procedure stack3\n"
+	
+	# evaluate a command in the scope of proc above the current call level
+	
+	uplevel 1 {incr x 10}
+	uplevel 2 {incr x 100}
+	uplevel #0 {incr x 200}
+	puts "" 
+	
+	# display the value of x at absolute stack levels
+	for {set i 0} {$i < 3} {incr i} {
+		upvar #$i x localX
+		puts "X at upvar #$i is $localX"
+	} 
+	puts ""
+}
+
+proc b1 {} {
+	global x
+	puts "X at global scope is $x"
+}
+
+set x 0
+puts "X in global scope is $x"
+stack1
+b1
+
+$ o/p:
+X at global scope is 0
+
+X in stack1 starts as 1
+X in stack2 starts as 2
+X in stack3 starts as 3
+
+X at upvar 1 is 2
+X at upvar 2 is 1
+X at upvar 3 is 0
+
+x is being modified from procedure stack3
+
+X at upvar #0 is 200
+X at upvar #1 is 101
+X at upvar #2 is 12
+
+x in stack2 ends as 12
+x in stack1 ends as 101
+
+x in global scope is 200
+
+######################################
+### Making a TCL object
+
+> TCL keeps separate hash tables for commands, associative array indices, and variables and the first word in a TCL command string must be a command name
+> any name can be defined as both a variable name and a proc name. interpreter will know which is meant by the position of the name in command line
+> Object orienting programming concenpt -  of having methods attached to a data object
+
+set myTree [newTreeObject]
+$mytree method arg1 arg2
+
++++++++++++++++++++++++++++++
+Chapter 7: Namespace and Packages
++++++++++++++++++++++++++++++
+namespace: organize the code and data within a package safely
+package: provides tools for organizing code modules into libraries
+
+Namespaces: 
+> namespace scope as some characterstics of the global scope and some characterstics of a procedure local scope
+> namespace are similar to global scope in that:
+1. proc created at any scope within a namespace are visible at the top level of the namespace
+2. variables created in a namespace scope (outside a local proc scope) are maintained b/w execution of code within the namespace
+3. variables created in a namespace scope (outside a local proc scope) can be any proc that is being evaluated within that namespace
+4. while a proc defined within a namespace is being evaluated, it creates a locl scope within that namespace, not within the global namespace
+
+> namespace are similar to local proc scope in that:
+1. code being evaluated within a namespace can access variables and procs defined in the global space
+2. all namespaces are contained within the global scope
+3. namespaces can nest within each other
+
+> namespace can declare certain items (procs or variables) to be exportable. exportable items can be made visible in the global scope
+> a nested namespace can keep procs and hidden variables hidden from higher level namespaces
+
+## namespace naming convention
+> namespace entities are separated with ::
+> global scope - ::
+> namespaces identifiers that start with a :: are absolute identifiers and are resolved from the global namespace. namespace idenetifiers that do not start with :: are relative identifiers and are resolved from current namespace 
+
+::foo::bar::baz
+
+> an entity (proc or data) in a name space can always be accessed if script knows the full path to that entity 
+> a script can publish the entities within a namespace that it considers public with namespace export command, and other scripts ca import entities  from the namespace into their local scope with namespace import command  
+
+** namespace eval namespaceID arg ?args?
+namespace eval: creates a namespace, and evaluate the script arg in the scope. If more than one arg is present, the arguments are concatenated together into a single command to be evaluated
+
+if the defined namespace does not exists, it is created
+if defined, procs and variables are created within the namescope scope
+
+** namespace export pattern ?patterns?
+export members of the current namespace that match the patterns. exported names can then be imported into other scopes. the patterns are in glob format
+
+** namespace import ?-force? ?pattern?
+namespace import: imports variables and proc names that match a pattern
+-force: import command will overwrite existing commands with the new ones from the pattern namespace. otherwise, namsespace import will return an error if a new command has the same name as an exixting command
+pattern: patterns to import. must include namespaceID of the namespace from which items are being imported. 
+
+** namespace children ?scope? ?pattern?
+namespace children: returns a list of namespaces that exists within the scope
+?scope?: namespace scope from which the list of namespaces will be returned
+
+** variable varName ?value? ?varName2? ?value2?
+variable: Declare a variable to exist within the current namespace. The arguments are pairs of name and value combinations. will not be destroyed when the namespace scope is exited.
+
+> A namespace can be populated with procedures and data either in a single namespace eval command or in multiple invocations of the namespace eval command.
+
+namespace eval uniqueNumber {
+	variable staticVar 0;
+	namespace export getUnique
+	
+	proc getUnque {} {
+		variable staticVar 
+		return [incr staticVar]
+	}
+}
+
+puts "Visible namespaces from the global scope are: [namespace children]"
+puts "Before import, global scope contains these \"get*\" commnads : [info commands get*]"
+
+namespace import ::uniqueNumber::*
+puts "After import, global scope contains these \"get*\" commnads : [info commands get*]"
+
+puts "first Unique val: [getUnique]"
+puts "second Unique val: [getUnique]" 
+
+puts "staticVar: [namespace eval uniqueNumber {set staticVar}]"
+puts "staticVar is : $staticVar"
+
+> ::tcl namspace is always present when the TCL interpreter is running
+
+**** Namespace Nesting
+> if proc in two namespaces need functionality that exists in a third namespace - 
+1. can create a shared copy of the third namespace in the scope of the first two namespaces 
+2. each can create a copy of the third namespace nested within ints own namespace scope - creates a unique copy of the persistent data defined within the third namespace. If a namespace is shared, then the data is also shared.
+
+proc createUnique {} {
+	uplevel 1 {
+		namespace eval uniqueNumber {
+			variable staticVal 0
+			namespace export getUnique
+			proc getUnique {} {
+				variable staticval
+				return [incr staticVal]
+			}
+		}
+	}
+}
+
+namespace eval Package1 {} {
+	createUnique 
+	namespace import uniqueNumber::*
+	proc pack1demo {} {
+		return "pack1demoUnique.[getUnique]"
+	}
+}
+
+namespace eval Package2 {} {
+        createUnique 
+        namespace import uniqueNumber::*
+        proc pack2demo {} {
+                return "pack2demoUnique.[getUnique]"
+        }       
+}
+
+
+**** Packages
+> package command allows - group a set of procs into files and identify them with a single name
+> package - provides library functionality, namespace provides encapsulation functionality
+> package provides - declares that collection of procs and variables is identified by a single identifier (the package name) and that this collection constituents a particular revision of the package
+> when a set of code is defined as a package, an index file is created that lists the procs that are included in that package
+
+> TCL interpreter will search the index files in the directories listed in the global variables auto_path. The auto_path variable is defined in the init.tcl script, which is loaded when a TCL or Tk interpreter is started.
+> when create an index for a package that has procs defined within a namespace, only the proc names listed a namespace expot command will be indexed.
+
+auto_path : global variable
+contains a list of the directries that should be searched for package index files. defined in the init.tcl script, which is loaded when a tclsh interpreter is started
+in unix, init.tcl is present in : /usr/local/lib/tcl8.0
+
+auto_index : global array
+auto_index array is indexed with the names of procs defined in pkgInde.tcl files. the data associated with each index is the command to evaluate which will load the package that defines the procedure. the command will resemble: source /usr/myLibs/package.tcl
+
+pkgIndex.tcl: file
+contain a list of procs defined by the packages in that directory. the pkgIndex.tcl files are created with the pkg_mkIndex command
+
+$$$ Package commands
+** pkg_mkIndex dir pattern ?pattern?
+creates a package index file. not evaluated when a script is being evaluated, but it is evaluated when a package is being installed or tested
+pkgIndex.tcl file contains:
+1. name of packages defined in the files that match the patterns
+2. version levle of these packages
+3. names of procs defined in the packages
+4. name of the command to use to load the package
+
+#!/usr/local/bin/tclsh
+pkg_mkIndex [pwd] file1.tcl file2.tcl file3.tcl
+
+** package provides packageName ?version?
+
+** package require ?-exact? packageName ?versionNum? 
+> TCL delays loading of files until a proc is req - to avoid lengthy initalization times
+> if a package is marked by the package require command, but no commands from that package are actually used, the TCL interpreter never loads the file
+> when a package is loaded automatically, it is loaded into global scope
+> to force the package to load immediately, TCL eval command to evaluate the command that the package require placed in auto_index
+
+*** using a TCL package
+1. if the package is not located in one of the TCL search directories listed by default in auto_package - add the directory that contains the package's pkgIndex.tcl file to the search list.
+
+> $lappend auto_path /usr/project/packageDir
+> set the environment variable TCLLIBPATH to include package direcotry
+> add package direcotry to the auto_path definition in the init.tcl file. this file will be located in the TCL library drectory.
+
+2. add the line 
+package requires packageName ?versionNumber?
+in the script.
+
+3. need package to load immediately, follow the package require command with
+
+global auto_index ; # if this is within a proc
+eval $auto_index(packageProcedureName)
+
+
++++++++++++++++++++++++++++++
+Chapter 12: Writing a TCL extension
++++++++++++++++++++++++++++++
+> TCL 8.0 and later, data is stored internally in a Tcl_Obj structure. The Tcl_Obj structure contains a string representation of the data and a native representation of the data. The two reps are kept in sync in a lazy manner; native and string reps are calculated when needed and retianed as long as they are valid. 
+
+> An extension must perform:
+1. initalize any persistent data str
+2. register new commands in the Tcl interpreter
+3. accept data from Tcl interpreter
+4. process the new commands
+5. return results to the calling scripts
+6. return status to the calling scripts
+
+*** Data types
+
+Tcl_Interp * A pointer to a Tcl interpreter state structure
+Tcl_ObjCmdProc * A pointer to a function that will accept Tcl objects as arguments
+Tcl_CmdProc * A pointer to a function that will accept strings as arguments
+ClientData A one word value that is passed to functions but is never used by the Tcl interpreter. allows functions to use data that is specific to the application, not the interpreter.
+
+*** registering new commands with the interpreter - by calling a function that will insert the name of the new command into the Tcl command hash table and associated that name with a pointer to a function that will implement a commnad.
+
+$ int Tcl_CreateObjCommand (interp, cmdName, func, clientData, deleteFunc) > register the new command as a function that can use Tcl Objects
+$ int Tcl_CreateCommand (interp, cmdName, func, clientData, deleteFunc) > registers the new commands as a function that requires string arguments
+
+following actions are performed within the Tcl interpreter:
+1. register cmdName with the Tcl interpreter
+2. define clientData data for the command
+3. define the fucntion to call when the command is evaluated
+4. define the command to call when the command is destroyed
+
+Tcl_interp *interp : pointer to the Tcl interpreter. req by all commands that need to interact with the interpreter state
+char *cmdName: name of new command, as a NULL-terminated string
+Tcl_ObjCmdProc *func: function to call when cmdName is encountered in a sript
+ClientData clientData: value/pointer that will passed to func when the interpreter encounters cmdName and calls func
+Tcl_CmdDeleteProc *deleteFunc : a pointer to a function to call when the command is deleted. if the command has some persistent data object associated with it, this fucntion should free that memory. if no special processing, set this pointer to NULL, and the tcl interpreter will no register will not register a command deletion procedure.
+
+These commands will return TCL_OK to indicate success or TCL_ERROR to indicate a failure. These are defined in the file tcl.h, which should be #included in source
+
+*** transferring data from a Tcl script to a C Language extension
+> function that implements the C command receives an inter count and an array of pointers to the Tcl script arguments
+  
+Syntax: int func(clientData, interp, objc/argc, objv/argv) 
+objc: count of objects being passed as arguments
+Tcl_Obj *objv[]: an array of Tcl objects that were the arguments to the Tcl command to the script
+
+function returns: 
+TCL_OK
+TCL_ERROR
+TCL_RETURN
+TCL_BREAK
+TCL_COTINUE
+
+*** Data representation
+Tcl_Obj str maintains a string rep of the data as well as the native rep. when one rep of the data is modified, the other repis deleted to indicate that it must be regenrated when needed again. 
+
+The ref counts associated with Tcl objects allow the Tcl interpreter to maintain pointers to objects, instead of making copies of any objects that are ref in more than one location. when a object is created, it is asigned a ref count of 0. when a Tcl object is referenced/called by other objects ref counter increased by 1. when an object that ref other Tcl object is destroyed, ref count is reduced by 1. If ref count becomes 0 or less, the object is deleted and its memory is returned to the heap.
+
+*** Obtaining the Data -
+> Tcl conversion functions to extract either the string or native rep of the data 
+int Tcl_GetIntFromObj (interp, objPtr, intPtr) : retrieve an integer from the object
+int Tcl_GetDoubleFromObj (interp, objPtr, doublePtr)
+char *Tcl_GetStringFromObj(objPtr, lengthPtr) : retrieve a byte string from the object
+
+*** returning the results
+Tcl_Obj *Tcl_NewIntObj(intValue) : create a new Tcl objects with an integer value
+Tcl_Obj *Tcl_NewDoubleObj(doubleValue)
+Tcl_Obj *Tcl_NewStringObj(bytes, length): create a new Tcl object from a byte string
+void Tcl_SetIntObj(objPtr, intValue)
+void Tcl_SetDoubleObj(objPtr, doubleValue)
+void Tcl_SetStringObj(objPtr, bytes, length)
+void Tcl_AppendToObj(objPtr, bytes, length)
+void Tcl_AppendObjToObj(objPtr, appendObjPtr)
+void Tcl_AppendStringsToObj (objPtr, string, .... NULL)
+void Tcl_SetObjResult(interp, objPtr)
+void Tcl_SetResult (interp, string, freeProc)
+
+freeProc: name of the proc to call to free the memory associated with the string when this object is destroyed. must be one of:
+TCL_STATIC
+TCL_DYNAMIC
+TCL_VOLATILE
+
+*** returning status to the script
+void Tcl_AddObjErrorInfo(interp, message, length)
+void Tcl_AddErrorInfo(interp, message)
+void Tcl_SetObjErrorCode(interp, objPtr)
+void Tcl_SetErrorCode(interp, element1, element2, ...., NULL)
+
++++++++++++++++++++++++++++++
+Chapter 15: TIPS and TECHNIQUES
++++++++++++++++++++++++++++++
+1. examine variables when they are accesed with the trace command
+
+$ trace variable name operations command
+operations: when a selected operation on the variable occurs, the command will be evaluated. 
+r -- evaluate the command whenever the variable is read
+w -- variable is written
+u -- variable is unset
+
+2. generate a call stack with the info level command
+info level ?levelValue?
+
+3. run a command in interactive mode
+invoke the sc ript using source command.
+
+4. use puts to print the value of variables or lines that are to be evaluated
+
+5. extract portions of script for unit testing
+
+
+***** exec command
+> invokes new programs in a subprocess and return the program o/p to the Tcl interpreter as the result of the command. 
+
+exec ?-options? arg1 ?arg2 ... argn?
+-options:: 
+-keepnewline > trailing new line is retained
+-- > denotes the last option. All subsequent args will ne treated as subprocess program names or arguments
+
+!!! Caution 
+1. Tcl list is passed as a single argument to a proc
+2. lappend, append, and incr - only Tcl command that modify an argument
+3. lreplace, string, and expr - return a new value without modifying the argument
+4. incr command works with integers
+5. convert a floating point number to an integer with expr round and expr int commands
+6. upvar command takes a name, not a value
+
+!!! Coding tips and techniques
+1. use procs instead of switch statements to parse input
+
+Switch Statement: 
+while {[gets stdin cmdLine]} {
+	set cmd [lindex $cmdLine 0]
+	switch $cmd {
+		"cmd1"	{cmd1Proc $cmdLine}
+		"cmd2"	{cmd2Proc $cmdLine}
+		"......."
+	}
+} 
+
+Parse using Loop:
+while {[gets stdin cmdLine]} {
+        set cmd [lindex $cmdLine 0]
+	set cmdName [format "%sProcedure" $cmd]
+
+	# confirm that the command exists before trying to eval it
+	if {[info command $cmdName] != ""} {
+		eval $cmdName $cmdLine
+	}
+}
+
+2. use the info complete command to match quotes, braces, and brackets. will return 1 if a command is complete 0 else.
+3. use eval command to set command line arguments
+foreach arg $argv {
+	set varName [format "%sMode" $arg]
+	eval set $varName 1
+}
+
+4. use a single array for global variables
+
+proc initalizeParameters {
+	global globalparams
+	set globalParams(height) 100
+	set globalParams(width) 200
+}
+
+using an associative array - lets save the program's state with a loop
+foreach index [array names myStateArray] {
+	puts $savefile "set myStateArray($index) {$myStateArray($index)}"
+}
+
+5. declare globals in a single location
+
+set globalList {errorInfo errorCode argv argc stateArray stateArray2}
+
+proc someProcedure {args} {
+	global globaList; eval global $globalList
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,36 @@
+#### Regular expression matching rules:
+
+** smallest part of a regex is an atom -- an atom may be:
+a single char - x - will match the char x
+a range of chars enclosed in brackets - [a-q] - will match any lowercAse letter b/w a and q (inclusive)
+a period - . - will match any character
+a caret - ^ - matches the begining of a string
+a dollar sign - $ - matches the end of a string
+a backslash sequence - \^ - inhibits treating *, & $, +, etc as special char and matches the exact char
+a regex enclosed in paranthesis - ([Tt]cl) - will match that regex
+
+** atoms can be cmbined into peices:
+another atom - ab - matches if each atom matches in seq
+an asterisk - a* - matches 0 or more occurences of the preceeding atom
+a plus - a+ - matches 1 or more occurences of the preceeding atom
+a question mark - [a-z]? - matches 0/1 occurence of the preceeding atom
+another peice - [a-z]?[0-9] - matches a letter followed by 0/1 more letters, followed by a number
+
+** peices can be combined into a regex
+an atom - T - if the atom is matched, regex is true
+a peice - [TtCcLl]* if the peice kis matched regex is true
+multiple peices separted by | - ([Tt]cl)|([Tt]k) - if any peice matched, regex is true
+
+** range -- consists of sq bracket enclosing
+a set of chars - [tcl] - any letter within brackrt may match the target
+two chars separated by a dash - [a-z]- define a range of chars that may match the target
+a char preceeded by a caret, if the caret is the first letter in the range - [^,] - any char except the char after ^ may match the target
+[^a-z] - any char except chars  b/w the two chars after the ^ may match the target
+
+** a peice or atom can be enclosed within parenthesis and will be considered as a single atom
+
+** regex commands will return the largest block of text that matches the regex.
+A.+B : match any set if chars bounded by A and B  
+
+[^\n]* : match zero or more chars that are not newline chars
+

@@ -1,0 +1,39 @@
+
+*****************  
+** Trees in TCL
+*****************
+> create a tree using associative array and a naming conventions
+> parent node can ref multiple child nodes, and a child node ref a single parent.
+> when a node is created, a handle is returned. this handle is passed to the procedure that manipulates the tree
+
+This package defines a single associative array to hold the trees and their nodes.
+
+$$ tree package naming convention - treat each associative array index as multiple fields separated by periods.
+
+global variable :  Tree_InternalArray > has indices that are used for
+1. internal housekeeping 
+2. defining a node
+3. defining a node's parent
+4. defining a node's children
+5. attaching key/values sets of data to a node
+6. attaching key/value sets of data to entire tree
+
+
+Tree_InternalArray(base) > this index contains a counter that id incremented each time a new tree is created. it is used to create unique identifiers for each tree
+
+Tree_InternalArray(treeID.base) > index contains a counter that is incremented each time a new node is created. it is used to create a unique i
+dentifiers for each node within a given tree.
+
+treeID.nodeID > this node is set when a node is created and is used by the internal procs to confirm that a handle ref a valid node. it does not contain any useful data
+
+treeID.nodeID.children > index contains a list of handles of the children for the node idnetified by treeID.nodeID
+
+treeID.nodeID.parent > 
+
+treeID.nodeID.node.key > allows nodes to be used as container objects. 
+
+treeID.tree.Key > these indices attach data to the tree, instead of a single node. the data can be retrieved with any node hanble and Key
+
+proc Nameing Conventions >>> start proc names intended for use within a package with an upperclass letter (eg Tree) and use lowercase letters to start the procs intended for external use (eg tree). 
+
+
